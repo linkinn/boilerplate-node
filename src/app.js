@@ -1,5 +1,7 @@
 const express = require('express');
 
+require('./database');
+
 class App {
   constructor() {
     this.server = express();
