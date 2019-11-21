@@ -9,6 +9,10 @@ router
   .get(UserController.index)
   .post(UserController.store);
 
-router.route('/:id').get(UserController.show);
+router
+  .route('/:id')
+  .get(UserController.show)
+  .patch(UserController.update)
+  .delete(UserController.delete);
 
 module.exports = router;
