@@ -1,21 +1,21 @@
-const Sequelize = require('sequelize');
+// const Sequelize = require('sequelize');
 const mongoose = require('mongoose');
 
-const databaseConfig = require('../config/database');
+// const databaseConfig = require('../config/database');
 
-const models = [];
+// const models = [];
 
 class Database {
   constructor() {
-    this.init();
+    // this.init();
     this.mongo();
   }
 
-  init() {
-    this.connection = new Sequelize(databaseConfig);
+  // init() {
+  //   this.connection = new Sequelize(databaseConfig);
 
-    models.map(model => model.init(this.connection));
-  }
+  //   models.map(model => model.init(this.connection));
+  // }
 
   mongo() {
     this.mongoConnection = mongoose
