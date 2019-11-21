@@ -14,6 +14,11 @@ const userSchema = new moongose.Schema({
   photo: {
     type: String
   },
+  roles: {
+    type: String,
+    enum: ['adim', 'manager', 'user'],
+    default: 'user'
+  },
   password: {
     type: String,
     required: [true, 'Please confirm your password'],

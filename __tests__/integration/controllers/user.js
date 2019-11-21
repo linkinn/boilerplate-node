@@ -89,7 +89,7 @@ describe('User', () => {
     );
 
     expect(response.status).toBe(404);
-    // expect(response.body.message).toBe('User not exist!');
+    expect(response.body.message).toBe('No document find with that ID!');
   });
 
   it('should be able update user', async () => {
@@ -109,6 +109,7 @@ describe('User', () => {
       .send({ email: 'test@email.com' });
 
     expect(response.status).toBe(404);
+    expect(response.body.message).toBe('No document find with that ID!');
   });
 
   it('should be able delete user', async () => {
@@ -125,9 +126,6 @@ describe('User', () => {
     );
 
     expect(response.status).toBe(404);
-  });
-
-  afterAll(() => {
-    moongose.connection.close();
+    expect(response.body.message).toBe('No document find with that ID!');
   });
 });
