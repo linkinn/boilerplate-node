@@ -1,6 +1,10 @@
+require('./bootstrap');
+
 const express = require('express');
 
-require('./database');
+// require('./database');
+
+const routes = require('./routes');
 
 class App {
   constructor() {
@@ -13,7 +17,9 @@ class App {
     this.server.use(express.json());
   }
 
-  routes() {}
+  routes() {
+    this.server.use(routes);
+  }
 }
 
 module.exports = new App().server;
