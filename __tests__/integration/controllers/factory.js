@@ -105,8 +105,4 @@ describe('Factory', () => {
     expect(response.status).toBe(404);
     expect(response.body.message).toBe('No document find with that ID!');
   });
-
-  afterAll(() => {
-    moongose.connection.close();
-  });
 });

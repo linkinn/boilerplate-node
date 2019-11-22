@@ -10,24 +10,35 @@ const User = require('../../../src/app/schemas/userSchema');
 describe('User', () => {
   beforeEach(async () => {
     await User.remove();
+    await factory.create('User', {
+      email: 'admin@email.com'
+    });
   });
 
-  it('should be able create a user', async () => {
+  it('should create a user', async () => {
+    const currentUser = await User.findOne({ email: 'admin@email.com' });
+    const token = currentUser.generateToken(currentUser._id);
+
     const user = await factory.attrs('User');
 
     const response = await request(app)
       .post('/api/v1/users')
+      .set('Authorization', `Bearer ${token}`)
       .send(user);
 
     expect(response.body.status).toBe('success');
     expect(response.status).toBe(201);
   });
 
-  it('should be able create user with encrypted password', async () => {
+  it('should create user with encrypted password', async () => {
+    const currentUser = await User.findOne({ email: 'admin@email.com' });
+    const token = currentUser.generateToken(currentUser._id);
+
     const user = await factory.attrs('User');
 
     const response = await request(app)
       .post('/api/v1/users')
+      .set('Authorization', `Bearer ${token}`)
       .send(user);
 
     const compareHash = await bcrypt.compare(
@@ -38,21 +49,29 @@ describe('User', () => {
     expect(compareHash).toBe(true);
   });
 
-  it('should be able users with duplicate email', async () => {
+  it('should users with duplicate email', async () => {
+    const currentUser = await User.findOne({ email: 'admin@email.com' });
+    const token = currentUser.generateToken(currentUser._id);
+
     const user = await factory.attrs('User');
 
     await request(app)
       .post('/api/v1/users')
+      .set('Authorization', `Bearer ${token}`)
       .send(user);
 
     const response = await request(app)
       .post('/api/v1/users')
+      .set('Authorization', `Bearer ${token}`)
       .send(user);
 
     expect(response.status).toBe(400);
   });
 
-  it('should be able get all users', async () => {
+  it('should get all users', async () => {
+    const currentUser = await User.findOne({ email: 'admin@email.com' });
+    const token = currentUser.generateToken(currentUser._id);
+
     const userOne = await factory.attrs('User');
     const userTwo = await factory.attrs('User', {
       email: 'teste@email.com'
@@ -60,68 +79,96 @@ describe('User', () => {
 
     await request(app)
       .post('/api/v1/users')
+      .set('Authorization', `Bearer ${token}`)
       .send(userOne);
 
     await request(app)
       .post('/api/v1/users')
+      .set('Authorization', `Bearer ${token}`)
       .send(userTwo);
 
-    const response = await request(app).get('/api/v1/users');
+    const response = await request(app)
+      .get('/api/v1/users')
+      .set('Authorization', `Bearer ${token}`);
 
-    expect(response.body.results).toBe(2);
+    expect(response.body.results).toBe(3);
   });
 
-  it('should be able get one user', async () => {
+  it('should get one user', async () => {
+    const currentUser = await User.findOne({ email: 'admin@email.com' });
+    const token = currentUser.generateToken(currentUser._id);
+
     const user = await factory.create('User', {
       email: 'test@email.com'
     });
 
-    const response = await request(app).get(`/api/v1/users/${user._id}`);
+    const response = await request(app)
+      .get(`/api/v1/users/${user._id}`)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(response.body.data.doc.email).toBe('test@email.com');
   });
 
-  it('should be able get user invalid id', async () => {
-    const response = await request(app).get(
-      `/api/v1/users/5c8a1d5b0190b214360d9999`
-    );
+  it('should get user invalid id', async () => {
+    const currentUser = await User.findOne({ email: 'admin@email.com' });
+    const token = currentUser.generateToken(currentUser._id);
+
+    const response = await request(app)
+      .get(`/api/v1/users/5c8a1d5b0190b214360d9999`)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(404);
     expect(response.body.message).toBe('No document find with that ID!');
   });
 
-  it('should be able update user', async () => {
+  it('should update user', async () => {
+    const currentUser = await User.findOne({ email: 'admin@email.com' });
+    const token = currentUser.generateToken(currentUser._id);
+
     const user = await factory.create('User');
 
     const response = await request(app)
       .patch(`/api/v1/users/${user._id}`)
+      .set('Authorization', `Bearer ${token}`)
       .send({ email: 'test@email.com' });
 
     expect(response.body.status).toBe('success');
     expect(response.body.data.doc.email).toBe('test@email.com');
   });
 
-  it('should be able update user not exist', async () => {
+  it('should not update user that does not exist', async () => {
+    const currentUser = await User.findOne({ email: 'admin@email.com' });
+    const token = currentUser.generateToken(currentUser._id);
+
     const response = await request(app)
       .patch(`/api/v1/users/5c8a1d5b0190b214360dc052`)
+      .set('Authorization', `Bearer ${token}`)
       .send({ email: 'test@email.com' });
 
     expect(response.status).toBe(404);
     expect(response.body.message).toBe('No document find with that ID!');
   });
 
-  it('should be able delete user', async () => {
+  it('should delete user', async () => {
+    const currentUser = await User.findOne({ email: 'admin@email.com' });
+    const token = currentUser.generateToken(currentUser._id);
+
     const user = await factory.create('User');
 
-    const response = await request(app).delete(`/api/v1/users/${user._id}`);
+    const response = await request(app)
+      .delete(`/api/v1/users/${user._id}`)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(204);
   });
 
-  it('should be able delete user not exist', async () => {
-    const response = await request(app).delete(
-      `/api/v1/users/5c8a1d5b0190b214360dc052`
-    );
+  it('should not delete user that does not exist', async () => {
+    const currentUser = await User.findOne({ email: 'admin@email.com' });
+    const token = currentUser.generateToken(currentUser._id);
+
+    const response = await request(app)
+      .delete(`/api/v1/users/5c8a1d5b0190b214360dc052`)
+      .set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(404);
     expect(response.body.message).toBe('No document find with that ID!');
