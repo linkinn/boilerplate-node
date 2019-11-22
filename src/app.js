@@ -1,6 +1,10 @@
 require('./bootstrap');
 
 const express = require('express');
+const rateLimit = require('express-rate-limit');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
+const xss = require('xss-clean');
 
 require('./database');
 
@@ -18,7 +22,16 @@ class App {
   }
 
   middleware() {
-    this.server.use(express.json());
+    this.server.use(helmet());
+    const limiter = rateLimit({
+      max: 100,
+      windowMs: 60 * 60 * 1000,
+      message: 'Too many requests from this IP, please try again in an hour!'
+    });
+    this.server.use('/api', limiter);
+    this.server.use(express.json({ limit: '10kb' }));
+    this.server.use(mongoSanitize());
+    this.server.use(xss());
   }
 
   routes() {
