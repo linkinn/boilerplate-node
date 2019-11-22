@@ -17,7 +17,7 @@ describe('Factory', () => {
   it('should be able get a doc', async () => {
     const user = await factory.create('User');
 
-    app.get('/factories/:id', new FactoryController(User).show);
+    app.get('/factories/:id', FactoryController.show(User));
     const response = await request(app).get(`/factories/${user._id}`);
 
     expect(response.status).toBe(200);
@@ -25,7 +25,7 @@ describe('Factory', () => {
   });
 
   it('should be able get error invalid id', async () => {
-    app.get('/factories/:id', new FactoryController(User).show);
+    app.get('/factories/:id', FactoryController.show(User));
     const response = await request(app).get(
       `/factories/5c8a1d5b0190b214360d9999`
     );
@@ -40,7 +40,7 @@ describe('Factory', () => {
     });
     await factory.create('User');
 
-    app.get('/factories', new FactoryController(User).index);
+    app.get('/factories', FactoryController.index(User));
 
     const response = await request(app).get('/factories');
 
@@ -51,7 +51,7 @@ describe('Factory', () => {
   it('should be able create a doc', async () => {
     const user = await factory.attrs('User');
 
-    app.post('/factories', new FactoryController(User).store);
+    app.post('/factories', FactoryController.store(User));
 
     const response = await request(app)
       .post('/factories')
@@ -64,7 +64,7 @@ describe('Factory', () => {
   it('should be able update a doc', async () => {
     const user = await factory.create('User');
 
-    app.patch('/factories/:id', new FactoryController(User).update);
+    app.patch('/factories/:id', FactoryController.update(User));
 
     const response = await request(app)
       .patch(`/factories/${user._id}`)
@@ -75,7 +75,7 @@ describe('Factory', () => {
   });
 
   it('should be able update error invalid id', async () => {
-    app.patch('/factories/:id', new FactoryController(User).update);
+    app.patch('/factories/:id', FactoryController.update(User));
 
     const response = await request(app)
       .patch(`/factories/5c8a1d5b0190b214360d9999`)
@@ -88,7 +88,7 @@ describe('Factory', () => {
   it('should be able delete a doc', async () => {
     const user = await factory.create('User');
 
-    app.delete('/factories/:id', new FactoryController(User).delete);
+    app.delete('/factories/:id', FactoryController.delete(User));
 
     const response = await request(app).delete(`/factories/${user._id}`);
 
@@ -96,7 +96,7 @@ describe('Factory', () => {
   });
 
   it('should be able delete error invalid id', async () => {
-    app.delete('/factories/:id', new FactoryController(User).delete);
+    app.delete('/factories/:id', FactoryController.delete(User));
 
     const response = await request(app).delete(
       `/factories/5c8a1d5b0190b214360d9999`

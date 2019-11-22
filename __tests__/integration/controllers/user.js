@@ -1,5 +1,4 @@
 const request = require('supertest');
-const moongose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
 const app = require('../../../src/app');
@@ -33,7 +32,7 @@ describe('User', () => {
 
     const compareHash = await bcrypt.compare(
       'test1234',
-      response.body.data.user.password
+      response.body.data.doc.password
     );
 
     expect(compareHash).toBe(true);
@@ -51,7 +50,6 @@ describe('User', () => {
       .send(user);
 
     expect(response.status).toBe(400);
-    expect(response.body.message.name).toBe('MongoError');
   });
 
   it('should be able get all users', async () => {
@@ -80,7 +78,7 @@ describe('User', () => {
 
     const response = await request(app).get(`/api/v1/users/${user._id}`);
 
-    expect(response.body.data.user.email).toBe('test@email.com');
+    expect(response.body.data.doc.email).toBe('test@email.com');
   });
 
   it('should be able get user invalid id', async () => {
@@ -100,7 +98,7 @@ describe('User', () => {
       .send({ email: 'test@email.com' });
 
     expect(response.body.status).toBe('success');
-    expect(response.body.data.user.email).toBe('test@email.com');
+    expect(response.body.data.doc.email).toBe('test@email.com');
   });
 
   it('should be able update user not exist', async () => {
