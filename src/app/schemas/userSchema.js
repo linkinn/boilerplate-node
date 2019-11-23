@@ -1,6 +1,7 @@
 const moongose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const uniqueValidator = require('mongoose-unique-validator');
 
 const userSchema = new moongose.Schema({
   name: {
@@ -10,6 +11,7 @@ const userSchema = new moongose.Schema({
   email: {
     type: String,
     unique: true,
+    lowercase: true,
     required: [true, 'Please provide your email']
   },
   photo: {
@@ -22,7 +24,7 @@ const userSchema = new moongose.Schema({
   },
   password: {
     type: String,
-    required: [true, 'Please confirm your password'],
+    required: [true, 'Please provide a password'],
     minlength: 8,
     select: false
   },
@@ -45,7 +47,7 @@ const userSchema = new moongose.Schema({
 });
 
 userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
+  // if (!this.isModified('password')) return next();
 
   this.password = await bcrypt.hash(this.password, 12);
 
@@ -66,6 +68,8 @@ userSchema.methods.generateToken = function(id) {
     expiresIn: process.env.JWT_EXPIRES_IN
   });
 };
+
+userSchema.plugin(uniqueValidator);
 
 const User = moongose.model('User', userSchema);
 

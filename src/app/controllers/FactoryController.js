@@ -44,7 +44,8 @@ exports.update = Model => async (req, res) => {
   try {
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
-      runValidators: true
+      runValidators: true,
+      context: 'query'
     });
 
     if (!doc) {

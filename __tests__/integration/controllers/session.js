@@ -1,5 +1,4 @@
 const request = require('supertest');
-// const bcrypt = require('bcryptjs');
 const moongose = require('mongoose');
 
 const factory = require('../../factories');
