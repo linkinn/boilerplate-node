@@ -3,6 +3,7 @@ const { Router } = require('express');
 const UserController = require('../app/controllers/UserController');
 const SessionController = require('../app/controllers/SessionController');
 const MeController = require('../app/controllers/MeController');
+const PasswordUpdateController = require('../app/controllers/PasswordUpdateController');
 
 const AuthMiddleware = require('../app/middlewares/authMiddleware');
 
@@ -13,6 +14,8 @@ router.post('/login', SessionController.store);
 router.post('/signup', MeController.store);
 
 router.use(AuthMiddleware.protect);
+
+router.patch('/updateMyPassowrd', PasswordUpdateController.update);
 
 router.get('/me', MeController.show, UserController.show);
 router.patch('/me', MeController.update);

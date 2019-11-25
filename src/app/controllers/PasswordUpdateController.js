@@ -1,20 +1,23 @@
-// if (req.body.oldPassword && req.body.password && req.body.passwordConfirm) {
-//   const user = await User.findById(req.user._id).select('+password');
+const User = require('../schemas/userSchema');
 
-//   if (!(await user.correctPassword('test1234', user.password))) {
-//     throw Error('Password does not match');
-//   }
+exports.update = async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id).select('+password');
+    console.log(
+      !(await user.correctPassword(req.body.oldPassword, user.password))
+    );
 
-//   filterBody.password = req.body.password;
-//   filterBody.passwordConfirm = req.body.passwordConfirm;
+    if (!(await user.correctPassword(req.body.oldPassword, user.password))) {
+      throw Error('Your current password is wrong');
+    }
 
-//   const updateUser = await User.findByIdAndUpdate(req.user.id, filterBody, {
-//     new: true,
-//     runValidators: true,
-//     context: 'query'
-//   });
+    user.password = req.body.password;
+    user.passwordConfirm = req.body.passwordConfirm;
 
-//   return res
-//     .status(200)
-//     .json({ status: 'success', data: { user: updateUser } });
-// }
+    await user.save();
+
+    return res.status(200).json({ status: 'success' });
+  } catch (error) {
+    return res.status(401).json({ status: 'error', message: error.message });
+  }
+};
