@@ -1,11 +1,14 @@
 const { Router } = require('express');
 
+const multerConfig = require('../config/multer');
+
 const UserController = require('../app/controllers/UserController');
 const SessionController = require('../app/controllers/SessionController');
 const MeController = require('../app/controllers/MeController');
 const PasswordUpdateController = require('../app/controllers/PasswordUpdateController');
 
 const AuthMiddleware = require('../app/middlewares/authMiddleware');
+const resizeImages = require('../app/middlewares/resizeImages');
 
 const router = Router();
 
@@ -18,7 +21,12 @@ router.use(AuthMiddleware.protect);
 router.patch('/updateMyPassowrd', PasswordUpdateController.update);
 
 router.get('/me', MeController.show, UserController.show);
-router.patch('/me', MeController.update);
+router.patch(
+  '/me',
+  multerConfig.uploadPhotoUser,
+  resizeImages.resizeUserPhoto,
+  MeController.update
+);
 
 router
   .route('/')

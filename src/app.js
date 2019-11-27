@@ -22,6 +22,7 @@ class App {
   }
 
   middleware() {
+    this.server.use(express.static('../public'));
     this.server.use(helmet());
     const limiter = rateLimit({
       max: 100,

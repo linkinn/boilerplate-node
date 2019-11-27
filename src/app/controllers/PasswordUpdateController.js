@@ -3,9 +3,6 @@ const User = require('../schemas/userSchema');
 exports.update = async (req, res) => {
   try {
     const user = await User.findById(req.user._id).select('+password');
-    console.log(
-      !(await user.correctPassword(req.body.oldPassword, user.password))
-    );
 
     if (!(await user.correctPassword(req.body.oldPassword, user.password))) {
       throw Error('Your current password is wrong');
